@@ -19,8 +19,12 @@ exports.find = function(callback){
     mongo.connect(url, function(err, db){
         if(err) throw err;
         
-        db.collection(collection).find(function(err, r){
-            err ? callback(err, null) : callback(null, r);
-        }).limit(10);
+        db.collection(collection)
+        .find({}, {_id: 0}, {limit : 10}).sort({_id: -1}).toArray(function(err, r){
+            if(err) callback(err,null);
+            else if(r) callback(null, r);
+        });
+        
+        db.close();
     });
 };
